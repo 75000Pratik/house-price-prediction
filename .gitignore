@@ -21,3 +21,7 @@ models/*.joblib
 # OS files
 .DS_Store
 Thumbs.db
+
+# Trained models
+models/
+*.pkl
