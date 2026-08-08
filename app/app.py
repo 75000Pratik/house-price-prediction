@@ -24,9 +24,15 @@ def health():
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json(silent=True)
-    if not data:
+
+    if data is None:
         return jsonify({
             "error": "Request body must contain JSON data"
+        }), 400
+
+    if not isinstance(data, dict):
+        return jsonify({
+            "error": "Request body must be a JSON object"
         }), 400
     required_features = [
         "MedInc",
