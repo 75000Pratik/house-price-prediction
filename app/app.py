@@ -48,6 +48,17 @@ def predict():
             "missing_features": missing_features
         }), 400
 
+    invalid_features = [
+        feature for feature in required_features
+        if not isinstance(data[feature], (int, float))
+        or isinstance(data[feature], bool)
+    ]
+
+    if invalid_features:
+        return jsonify({
+            "error": "Feature values must be numbers",
+            "invalid_features": invalid_features
+        }), 400
     house_data = pd.DataFrame([data])
     house_data_scaled = scaler.transform(house_data)
     prediction = float(model.predict(house_data_scaled)[0])
