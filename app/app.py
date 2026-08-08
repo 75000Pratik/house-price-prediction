@@ -76,7 +76,7 @@ def predict():
             "error": "Feature values must be numbers",
             "invalid_features": invalid_features
         }), 400
-    house_data = pd.DataFrame([data])
+    house_data = pd.DataFrame([data], columns=required_features)
     house_data_scaled = scaler.transform(house_data)
     prediction = float(model.predict(house_data_scaled)[0])
     predicted_price_dollars = round(prediction * 100000, 2)
