@@ -13,9 +13,41 @@ def home():
     return "House Price Prediction API is running!"
 
 
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "healthy",
+        "model": "Random Forest"
+    })
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({
+            "error": "Request body must contain JSON data"
+        }), 400
+    required_features = [
+        "MedInc",
+        "HouseAge",
+        "AveRooms",
+        "AveBedrms",
+        "Population",
+        "AveOccup",
+        "Latitude",
+        "Longitude"
+    ]
+    missing_features = [
+        feature for feature in required_features
+        if feature not in data
+    ]
+    if missing_features:
+        return jsonify({
+            "error": "Missing required features",
+            "missing_features": missing_features
+        }), 400
+
     house_data = pd.DataFrame([data])
     house_data_scaled = scaler.transform(house_data)
     prediction = model.predict(house_data_scaled)
