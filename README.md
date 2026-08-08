@@ -88,3 +88,17 @@ Example response:
   "predicted_price_dollars": 426060.27
 }
 ```
+
+## Run Tests
+
+Install the development dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Run the test suite:
+
+```bash
+python -m pytest
+```
