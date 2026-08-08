@@ -48,6 +48,17 @@ def predict():
             "missing_features": missing_features
         }), 400
 
+    unexpected_features = [
+        feature for feature in data
+        if feature not in required_features
+    ]
+
+    if unexpected_features:
+        return jsonify({
+            "error": "Unexpected features provided",
+            "unexpected_features": unexpected_features
+        }), 400
+
     invalid_features = [
         feature for feature in required_features
         if not isinstance(data[feature], (int, float))
