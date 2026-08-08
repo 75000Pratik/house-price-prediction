@@ -50,9 +50,12 @@ def predict():
 
     house_data = pd.DataFrame([data])
     house_data_scaled = scaler.transform(house_data)
-    prediction = model.predict(house_data_scaled)
+    prediction = float(model.predict(house_data_scaled)[0])
+    predicted_price_dollars = round(prediction * 100000, 2)
+
     return jsonify({
-        "predicted_price": float(prediction[0])
+        "predicted_price": round(prediction, 4),
+        "predicted_price_dollars": predicted_price_dollars
     })
 
 
