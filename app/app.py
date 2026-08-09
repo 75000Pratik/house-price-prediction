@@ -21,6 +21,14 @@ def health():
     })
 
 
+@app.route("/version")
+def version():
+    return jsonify({
+        "api_version": "1.0.0",
+        "model_version": "random_forest_v1"
+    })
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json(silent=True)
