@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
@@ -60,10 +61,14 @@ def version():
             model_version:
               type: string
               example: "random_forest_v1"
+            build_sha:
+              type: string
+              example: "43e9d47"  
     """
     return jsonify({
         "api_version": "1.0.0",
-        "model_version": "random_forest_v1"
+        "model_version": "random_forest_v1",
+        "build_sha": os.getenv("BUILD_SHA", "local")
     })
 
 

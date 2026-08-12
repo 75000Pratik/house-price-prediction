@@ -10,4 +10,8 @@ COPY . .
 
 EXPOSE 5000
 
+ARG BUILD_SHA=local
+
+ENV BUILD_SHA=$BUILD_SHA
+
 CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} app.app:app"]
