@@ -2,9 +2,11 @@ from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
 import logging
+from flasgger import Swagger
 
 app = Flask(__name__)
 
+swagger = Swagger(app)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,22 @@ def home():
 
 @app.route("/health")
 def health():
+    """
+    Check API health.
+    ---
+    responses:
+      200:
+        description: API and model are healthy
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: healthy
+            model:
+              type: string
+              example: Random Forest
+    """
     return jsonify({
         "status": "healthy",
         "model": "Random Forest"
@@ -27,6 +45,22 @@ def health():
 
 @app.route("/version")
 def version():
+    """
+    Get API and model version information.
+    ---
+    responses:
+      200:
+        description: API and model version information
+        schema:
+          type: object
+          properties:
+            api_version:
+              type: string
+              example: "1.0.0"
+            model_version:
+              type: string
+              example: "random_forest_v1"
+    """
     return jsonify({
         "api_version": "1.0.0",
         "model_version": "random_forest_v1"
@@ -43,6 +77,63 @@ def internal_server_error(error):
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    """
+    Predict house price.
+    ---
+    tags:
+      - Prediction
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - MedInc
+            - HouseAge
+            - AveRooms
+            - AveBedrms
+            - Population
+            - AveOccup
+            - Latitude
+            - Longitude
+          properties:
+            MedInc:
+              type: number
+              example: 8.3252
+            HouseAge:
+              type: number
+              example: 41
+            AveRooms:
+              type: number
+              example: 6.984
+            AveBedrms:
+              type: number
+              example: 1.024
+            Population:
+              type: number
+              example: 322
+            AveOccup:
+              type: number
+              example: 2.556
+            Latitude:
+              type: number
+              example: 37.88
+            Longitude:
+              type: number
+              example: -122.23
+    responses:
+      200:
+        description: House price prediction successful
+      400:
+        description: Invalid request data
+      500:
+        description: Internal server error
+    """
     data = request.get_json(silent=True)
 
     logger.info("Prediction request received")
