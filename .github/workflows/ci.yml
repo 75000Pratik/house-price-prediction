@@ -49,3 +49,8 @@ jobs:
         run: |
           docker build -t pratikt24/house-price-api:latest .
           docker push pratikt24/house-price-api:latest
+
+      - name: Trigger Render deployment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
