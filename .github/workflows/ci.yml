@@ -36,3 +36,16 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t house-price-api:ci .
+
+      - name: Login to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker build -t pratikt24/house-price-api:latest .
+          docker push pratikt24/house-price-api:latest
