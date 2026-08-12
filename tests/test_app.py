@@ -1,4 +1,4 @@
-from app.app import app
+from app.app import app, model
 
 
 def test_health_endpoint():
@@ -81,3 +81,26 @@ def test_predict_returns_price_for_valid_data():
     assert response.status_code == 200
     assert isinstance(response_data["predicted_price"], float)
     assert isinstance(response_data["predicted_price_dollars"], float)
+
+
+def test_predict_handles_internal_error(monkeypatch):
+    client = app.test_client()
+
+    def failing_predict(data):
+        raise RuntimeError("Test prediction failure")
+
+    monkeypatch.setattr(model, "predict", failing_predict)
+
+    response = client.post("/predict", json=({
+        "MedInc": 8.3252,
+        "HouseAge": 41,
+        "AveRooms": 6.984,
+        "AveBedrms": 1.024,
+        "Population": 322,
+        "AveOccup": 2.556,
+        "Latitude": 37.88,
+        "Longitude": -122.23
+    }))
+
+    assert response.status_code == 500
+    assert response.get_json()["error"] == "Prediction failed"

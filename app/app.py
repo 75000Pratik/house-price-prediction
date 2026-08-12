@@ -33,6 +33,14 @@ def version():
     })
 
 
+@app.errorhandler(500)
+def internal_server_error(error):
+    logger.exception("Internal server error")
+    return jsonify({
+        "error": "Internal server error"
+    }), 500
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json(silent=True)
@@ -94,9 +102,16 @@ def predict():
             "error": "Feature values must be numbers",
             "invalid_features": invalid_features
         }), 400
-    house_data = pd.DataFrame([data], columns=required_features)
-    house_data_scaled = scaler.transform(house_data)
-    prediction = float(model.predict(house_data_scaled)[0])
+    try:
+        house_data = pd.DataFrame([data], columns=required_features)
+        house_data_scaled = scaler.transform(house_data)
+        prediction = float(model.predict(house_data_scaled)[0])
+    except Exception:
+        logger.exception("Prediction failed")
+        return jsonify({
+            "error": "Prediction failed"
+        }), 500
+
     logger.info("Prediction completed: %.4f", prediction)
     predicted_price_dollars = round(prediction * 100000, 2)
 
