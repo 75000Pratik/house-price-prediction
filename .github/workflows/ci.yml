@@ -47,8 +47,12 @@ jobs:
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          docker build -t pratikt24/house-price-api:latest .
+          SHORT_SHA=${GITHUB_SHA::7}
+          docker build \
+            -t pratikt24/house-price-api:latest \
+            -t pratikt24/house-price-api:$SHORT_SHA .
           docker push pratikt24/house-price-api:latest
+          docker push pratikt24/house-price-api:$SHORT_SHA
 
       - name: Trigger Render deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
