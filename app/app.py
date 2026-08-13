@@ -1,5 +1,6 @@
 import time
 import os
+import uuid
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
@@ -141,8 +142,9 @@ def predict():
         description: Internal server error
     """
     data = request.get_json(silent=True)
+    request_id = str(uuid.uuid4())[:8]
 
-    logger.info("Prediction request received")
+    logger.info("Request %s - Prediction request received", request_id)
 
     if data is None:
         return jsonify({
@@ -215,7 +217,7 @@ def predict():
         }), 500
 
     logger.info(
-        "Prediction completed: %.4f in %.4f seconds", prediction, latency)
+        "Request %s - Prediction completed: %.4f in %.4f seconds", request_id, prediction, latency)
 
     predicted_price_dollars = round(prediction * 100000, 2)
 
