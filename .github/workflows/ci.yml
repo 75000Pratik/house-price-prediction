@@ -82,3 +82,22 @@ jobs:
 
           echo "Production deployment verification failed"
           exit 1
+
+      - name: Verify production prediction
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          RESPONSE=$(curl --fail --silent \
+            -X POST https://house-price-api-v2.onrender.com/predict \
+            -H "Content-Type: application/json" \
+            -d '{"MedInc":8.3252,"HouseAge":41.0,"AveRooms":6.984127,"AveBedrms":1.023810,"Population":322.0,"AveOccup":2.555556,"Latitude":37.88,"Longitude":-122.23}')
+
+          echo "$RESPONSE"
+
+          PREDICTION=$(echo "$RESPONSE" | python -c "import sys, json; print(json.load(sys.stdin).get('predicted_price', ''))")
+
+          if [ -z "$PREDICTION" ]; then
+            echo "Production prediction test failed"
+            exit 1
+          fi
+
+          echo "Production prediction test passed: $PREDICTION"
