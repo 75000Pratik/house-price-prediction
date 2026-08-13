@@ -159,13 +159,23 @@ def predict():
     logger.info("Request %s - Prediction request received", request_id)
 
     if data is None:
+        logger.warning(
+            "Request %s - Request body missing JSON data",
+            request_id
+        )
         return jsonify({
-            "error": "Request body must contain JSON data"
+            "error": "Request body must contain JSON data",
+            "request_id": request_id
         }), 400
 
     if not isinstance(data, dict):
+        logger.warning(
+            "Request %s - Request body is not a JSON object",
+            request_id
+        )
         return jsonify({
-            "error": "Request body must be a JSON object"
+            "error": "Request body must be a JSON object",
+            "request_id": request_id
         }), 400
     required_features = [
         "MedInc",
@@ -183,12 +193,14 @@ def predict():
     ]
     if missing_features:
         logger.warning(
-            "Missing required features: %s",
+            "Request %s - Missing required features: %s",
+            request_id,
             missing_features
         )
         return jsonify({
             "error": "Missing required features",
-            "missing_features": missing_features
+            "missing_features": missing_features,
+            "request_id": request_id
         }), 400
 
     unexpected_features = [
@@ -197,9 +209,15 @@ def predict():
     ]
 
     if unexpected_features:
+        logger.warning(
+            "Request %s - Unexpected features: %s",
+            request_id,
+            unexpected_features
+        )
         return jsonify({
             "error": "Unexpected features provided",
-            "unexpected_features": unexpected_features
+            "unexpected_features": unexpected_features,
+            "request_id": request_id
         }), 400
 
     invalid_features = [
@@ -209,9 +227,15 @@ def predict():
     ]
 
     if invalid_features:
+        logger.warning(
+            "Request %s - Invalid feature values: %s",
+            request_id,
+            invalid_features
+        )
         return jsonify({
             "error": "Feature values must be numbers",
-            "invalid_features": invalid_features
+            "invalid_features": invalid_features,
+            "request_id": request_id
         }), 400
     try:
         start_time = time.perf_counter()
