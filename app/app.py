@@ -1,3 +1,4 @@
+import time
 import os
 from flask import Flask, request, jsonify
 import joblib
@@ -199,16 +200,23 @@ def predict():
             "invalid_features": invalid_features
         }), 400
     try:
+        start_time = time.perf_counter()
+
         house_data = pd.DataFrame([data], columns=required_features)
         house_data_scaled = scaler.transform(house_data)
         prediction = float(model.predict(house_data_scaled)[0])
+
+        latency = time.perf_counter() - start_time
+
     except Exception:
         logger.exception("Prediction failed")
         return jsonify({
             "error": "Prediction failed"
         }), 500
 
-    logger.info("Prediction completed: %.4f", prediction)
+    logger.info(
+        "Prediction completed: %.4f in %.4f seconds", prediction, latency)
+
     predicted_price_dollars = round(prediction * 100000, 2)
 
     return jsonify({
