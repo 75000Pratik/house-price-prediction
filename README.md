@@ -1,104 +1,59 @@
 # House Price Prediction API
 
-A machine learning API that predicts house prices using a trained Random Forest model.
+A production-ready Machine Learning API that predicts California house prices using a tuned Random Forest model.
+
+The project covers the complete ML lifecycle: data preprocessing, model training, model evaluation, API development, Dockerization, automated testing, CI/CD, deployment, rollback, and production observability.
+
+## Model Performance
+
+The final tuned Random Forest model achieved approximately:
+
+- MAE: 0.3280
+- RMSE: 0.5061
+- R2: 0.8045
+
+The model was selected after comparing Linear Regression, Decision Tree, and Random Forest models.
 
 ## Tech Stack
 
 - Python
-- Flask
+- pandas
+- NumPy
 - scikit-learn
+- Flask
+- Gunicorn
 - joblib
+- Flasgger / Swagger
+- pytest
+- Docker
+- GitHub Actions
+- Git LFS
+- Docker Hub
+- Render
 
-## Run locally
+## Project Features
 
-1. Clone the repository:
+- Random Forest house-price prediction
+- Input validation for missing, unexpected, and non-numeric features
+- REST API with `/health`, `/version`, and `/predict`
+- Swagger API documentation
+- Automated pytest test suite
+- Dockerized Flask API served with Gunicorn
+- Git LFS for large ML model artifacts
+- GitHub Actions CI/CD pipeline
+- Automatic Docker Hub image publishing
+- Docker images tagged with both `latest` and Git commit SHA
+- Automatic Render deployment
+- Production build-SHA verification
+- Production prediction smoke testing
+- Rollback using immutable Docker SHA tags
+- Prediction latency logging
+- Request ID logging and client-visible request IDs
 
-```bash
-git clone https://github.com/75000Pratik/house-price-prediction.git
-cd house-price-prediction
-```
+## API Endpoints
 
-2. Create and activate a virtual environment:
-
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-```
-
-3. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-4. Start the API:
-
-```bash
-python app/app.py
-```
-
-The API runs at:
-
-```text
-http://127.0.0.1:5000
-```
-
-## Health Check
+### Health Check
 
 ```text
 GET /health
-```
-
-Example response:
-
-```json
-{
-  "status": "healthy",
-  "model": "Random Forest"
-}
-```
-
-## Prediction
-
-```text
-POST /predict
-Content-Type: application/json
-```
-
-Example request body:
-
-```json
-{
-  "MedInc": 8.3252,
-  "HouseAge": 41,
-  "AveRooms": 6.984,
-  "AveBedrms": 1.024,
-  "Population": 322,
-  "AveOccup": 2.556,
-  "Latitude": 37.88,
-  "Longitude": -122.23
-}
-```
-
-Example response:
-
-```json
-{
-  "predicted_price": 4.2606,
-  "predicted_price_dollars": 426060.27
-}
-```
-
-## Run Tests
-
-Install the development dependencies:
-
-```bash
-pip install -r requirements-dev.txt
-```
-
-Run the test suite:
-
-```bash
-python -m pytest
 ```
