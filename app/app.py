@@ -136,6 +136,18 @@ def predict():
     responses:
       200:
         description: House price prediction successful
+        schema:
+          type: object
+          properties:
+            predicted_price:
+              type: number
+              example: 4.2606
+            predicted_price_dollars:
+              type: number
+              example: 426060.27
+            request_id:
+              type: string
+              example: "37e82717"
       400:
         description: Invalid request data
       500:
@@ -223,7 +235,8 @@ def predict():
 
     return jsonify({
         "predicted_price": round(prediction, 4),
-        "predicted_price_dollars": predicted_price_dollars
+        "predicted_price_dollars": predicted_price_dollars,
+        "request_id": request_id
     })
 
 
